@@ -42,9 +42,9 @@ Vagrant.configure("2") do |config|
     v.vm.network "forwarded_port", guest: 80, host: 8082
   end
 
-#  config.vm.provider "virtualbox" do |puppetmaster|
-#    puppetmaster.customize ["modifyvm", :id, "--memory", "4096"]
-#  end
+  config.vm.provider "virtualbox" do |puppetmaster|
+    puppetmaster.customize ["modifyvm", :id, "--memory", "1024"]
+  end
 
   config.vm.define "puppetmaster" do |v|
     v.vm.hostname = "puppetmaster"
