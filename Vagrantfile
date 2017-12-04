@@ -6,18 +6,25 @@
 # backwards compatibility). Please don't change it unless you know what
 # you're doing.
 Vagrant.configure("2") do |config|
-
+#
+# base
+#
+$script = <<SCRIPT
+echo Self provisioning...
+apt-get update -y && \
+apt-get install python-apt python-minimal -y
+SCRIPT
   config.vm.box = "ubuntu/xenial64"
   # config.vm.box = "geerlingguy/centos7"
   config.vm.synced_folder ".", "/vagrant", disabled: true
   config.vm.provider "virtualbox" do |v|
-#    v.memory = 256
-#    v.cpus = 1
     v.customize ["modifyvm", :id, "--memory", "256"]
     v.linked_clone = true
-    end
-
-  # lab
+  config.vm.provision "shell", inline: $script
+  end
+#
+# lab
+#
   config.vm.define "acs" do |v|
     v.vm.hostname = "acs"
     v.vm.network "private_network", ip: "192.168.33.10"
