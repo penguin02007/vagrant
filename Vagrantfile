@@ -1,46 +1,30 @@
-# -*- mode: ruby -*-
-# vi: set ft=ruby :
-
-# All Vagrant configuration is done below. The "2" in Vagrant.configure
-# configures the configuration version (we support older styles for
-# backwards compatibility). Please don't change it unless you know what
-# you're doing.
 Vagrant.configure("2") do |config|
-#
-# base
-#
-$script = <<SCRIPT
+# bootstrip
+$bootstrip = <<SCRIPT
 echo Self provisioning...
 apt-get update -y && \
 apt-get install python-apt python-minimal -y
 SCRIPT
+# nat config
+def nat(config)
+    config.vm.provider "libvirt" do |v|
+      v.customize ["modifyvm", :id, "--nic1", "natnetwork", "--nat-network2", "pxe", "--nictype1", "virtio"]
+    end
+end
+
+  #  http://www.lucainvernizzi.net/blog/2014/12/03/vagrant-and-libvirt-kvm-qemu-setting-up-boxes-the-easy-way/
+  config.vm.provider :libvirt do |libvirt|
+    libvirt.host = 'libvirthost'
+    libvirt.username = 'root'
+    libvirt.connect_via_ssh = true
+  end
+
   config.vm.box = "ubuntu/xenial64"
-  # config.vm.box = "geerlingguy/centos7"
   config.vm.synced_folder ".", "/vagrant", disabled: true
   config.vm.provider "virtualbox" do |v|
     v.customize ["modifyvm", :id, "--memory", "256"]
     v.linked_clone = true
-  config.vm.provision "shell", inline: $script
-  end
-#
-# lab
-#
-  config.vm.define "acs" do |v|
-    v.vm.hostname = "acs"
-    v.vm.network "private_network", ip: "192.168.33.10"
-  end
-
-  config.vm.define "web" do |v|
-    v.vm.box = "nrel/CentOS-6.7-x86_64"
-    v.vm.hostname = "web"
-    v.vm.network "private_network", ip: "192.168.33.20"
-    v.vm.network "forwarded_port", guest: 80, host: 8080
-  end
-
-  config.vm.define "db" do |v|
-    v.vm.box = "nrel/CentOS-6.7-x86_64"
-    v.vm.hostname = "db"
-    v.vm.network "private_network", ip: "192.168.33.30"
+  config.vm.provision "shell", inline: $bootstrip
   end
 
   config.vm.define "nagios" do |v|

@@ -1,0 +1,35 @@
+Vagrant.configure("2") do |config|
+# bootstrip
+$script = <<SCRIPT
+echo Self provisioning...
+apt-get update -y && \
+apt-get install python-apt python-minimal -y
+SCRIPT
+
+# nat config
+def nat(config)
+    config.vm.provider "libvirt" do |v|
+      v.customize ["modifyvm", :id, "--nic1", "natnetwork", "--nat-network2", "pxe", "--nictype1", "virtio"]
+    end
+end
+  #  http://www.lucainvernizzi.net/blog/2014/12/03/vagrant-and-libvirt-kvm-qemu-setting-up-boxes-the-easy-way/
+  #  libvirt provider
+  config.vm.provider :libvirt do |libvirt|
+    libvirt.host = "kvm1.lab.rakops.com"
+    libvirt.username = 'opsbuild'
+    libvirt.connect_via_ssh = true
+  end
+  # base vm specs
+  config.vm.box = "generic/ubuntu1710"
+  config.vm.provider "virtualbox" do |v|
+    v.customize ["modifyvm", :id, "--memory", "1024"]
+    v.linked_clone = true
+  config.vm.provision "shell", inline: $script
+  end
+
+  # vm definition
+  config.vm.define "foo" do |v|
+    v.vm.hostname = "foo.dev"
+#    v.vm.network "private_network", ip: "192.168.33.31"
+  end
+end
