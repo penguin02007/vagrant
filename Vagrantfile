@@ -1,46 +1,76 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# All Vagrant configuration is done below. The "2" in Vagrant.configure
+# configures the configuration version (we support older styles for
+# backwards compatibility). Please don't change it unless you know what
+# you're doing.
+required_plugins = %w( vagrant-libvirt )
+required_plugins.each do |plugin|
+  system "vagrant plugin install #{plugin}" unless Vagrant.has_plugin? plugin
+end
 Vagrant.configure("2") do |config|
-  #  http://www.lucainvernizzi.net/blog/2014/12/03/vagrant-and-libvirt-kvm-qemu-setting-up-boxes-the-easy-way/
-  config.vm.provider "virtualbox" do |v|
-    v.customize ["modifyvm", :id, "--memory", "256"]
-    v.linked_clone = true
-  config.vm.provision "shell", inline: $bootstrip
-  config.vm.box = "ubuntu/xenial64"
-  end
-
- config.vm.provider :libvirt do |libvirt|
-    libvirt.host = 'libvirthost'
-    libvirt.username = 'root'
-    libvirt.connect_via_ssh = true
-  end
-
-  config.vm.synced_folder ".", "/vagrant", disabled: true
-# bootstrip
-$bootstrip = <<SCRIPT
+#
+# base
+#
+$script = <<SCRIPT
 echo Self provisioning...
 apt-get update -y && \
 apt-get install python-apt python-minimal -y
 SCRIPT
-
-# nat config
 def nat(config)
-    config.vm.provider "libvirt" do |v|
+    config.vm.provider "virtualbox" do |v|
+#      v.customize ["modifyvm", :id, "--nic1", "natnetwork", "--nat-network2", "pxe"]
       v.customize ["modifyvm", :id, "--nic1", "natnetwork", "--nat-network2", "pxe", "--nictype1", "virtio"]
     end
 end
+  config.vm.box = "ubuntu/xenial64"
+  config.vm.synced_folder ".", "/vagrant", disabled: true
+  config.vm.provider "virtualbox" do |v|
+    v.customize ["modifyvm", :id, "--memory", "1024"]
+    v.linked_clone = true
+  config.vm.provision "shell", inline: $script
+  end
 
-  config.vm.define "nagios" do |v|
-    v.vm.hostname = "nagios.dev"
-    v.vm.network "private_network", ip: "192.168.33.13"
+  config.vm.define "dnsmasq" do |v|
+    v.vm.hostname = "dnsmasq.dev"
+    v.vm.network "private_network", ip: "192.168.33.31"
+  end
+
+  config.vm.define "splunkn1" do |v|
+    v.vm.box = "centos/7"
+    v.vm.hostname = "splunkn1.dev"
+    v.vm.network "private_network", ip: "192.168.33.39"
+  end
+
+  config.vm.define "nagioscore" do |v|
+    v.vm.box = "daniele2010/ubuntu-14.04_x64-nagios"
+    v.vm.hostname = "nagioscore.dev"
+    v.vm.network "private_network", ip: "192.168.33.40"
   end
 
   config.vm.define "puppetmaster" do |v|
-    v.vm.hostname = "puppetmaster"
+    v.vm.hostname = "puppetmaster.dev"
     v.vm.network "private_network", ip: "192.168.33.41"
   end
 
-  config.vm.define "quartermaster" do |v|
-    v.vm.hostname = "quartermaster"
+    config.vm.define "quartermaster" do |v|
+#    nat(config)
+    v.vm.hostname = "quartermaster.dev"
     v.vm.network "private_network", ip: "192.168.33.42"
+  end
+
+    config.vm.define "dev-te01" do |v|
+    v.vm.box = "ubuntu/xenial64"
+    v.vm.hostname = "dev-te01.dev"
+    v.vm.network "private_network", ip: "192.168.33.43"
+  end
+
+    config.vm.define "ansible1" do |v|
+    v.vm.box = "ubuntu/xenial64"
+    v.vm.hostname = "ansible1.dev"
+    v.vm.network "private_network", ip: "192.168.33.44"
+    config.vm.provision "shell", inline: $script
   end
 
 end
