@@ -1,14 +1,9 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
-
-# All Vagrant configuration is done below. The "2" in Vagrant.configure
-# configures the configuration version (we support older styles for
-# backwards compatibility). Please don't change it unless you know what
-# you're doing.
-required_plugins = %w( vagrant-libvirt )
-required_plugins.each do |plugin|
-  system "vagrant plugin install #{plugin}" unless Vagrant.has_plugin? plugin
-end
+#required_plugins = %w( vagrant-libvirt )
+#required_plugins.each do |plugin|
+#  raise "vagrant plugin install #{plugin}" unless Vagrant.has_plugin? plugin
+#end
 Vagrant.configure("2") do |config|
 #
 # base
@@ -20,14 +15,15 @@ apt-get install python-apt python-minimal -y
 SCRIPT
 def nat(config)
     config.vm.provider "virtualbox" do |v|
-#      v.customize ["modifyvm", :id, "--nic1", "natnetwork", "--nat-network2", "pxe"]
-      v.customize ["modifyvm", :id, "--nic1", "natnetwork", "--nat-network2", "pxe", "--nictype1", "virtio"]
+      v.customize ["modifyvm", :id, "--nic1", "natnetwork", "--nat-network2", "pxe", "--nictype1","virtio"]
     end
 end
   config.vm.box = "ubuntu/xenial64"
   config.vm.synced_folder ".", "/vagrant", disabled: true
   config.vm.provider "virtualbox" do |v|
     v.customize ["modifyvm", :id, "--memory", "1024"]
+    # http://www.virtualbox.org/manual/ch09.html#nat-adv-dns
+    v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
     v.linked_clone = true
   config.vm.provision "shell", inline: $script
   end
