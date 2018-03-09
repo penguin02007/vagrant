@@ -1,11 +1,11 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
+DOMAIN = '.dev'
 plugins=[
   {
     :name    => "vagrant-scp",
     :version => ">= 0.5.7",
   },
-  {
   {
     :name    => "vagrant-vbguest",
     :version => ">= 0.15.1",
@@ -74,7 +74,7 @@ end
   end
 
     config.vm.define "observium" do |v|
-    v.vm.hostname = "observium.dev"
+    v.vm.hostname = "observium" + DOMAIN
     v.vm.network "private_network", ip: "192.168.33.44"
     config.vm.provision "shell", inline: $script
   end
