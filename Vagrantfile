@@ -1,9 +1,21 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
-#required_plugins = %w( vagrant-libvirt )
-#required_plugins.each do |plugin|
-#  raise "vagrant plugin install #{plugin}" unless Vagrant.has_plugin? plugin
-#end
+plugins=[
+  {
+    :name    => "vagrant-scp",
+    :version => ">= 0.5.7",
+  },
+  {
+  {
+    :name    => "vagrant-vbguest",
+    :version => ">= 0.15.1",
+  },
+]
+plugins.each do |plugin|
+  if not Vagrant.has_plugin?(plugin[:name], plugin[:version])
+    system "vagrant plugin install #{plugin}" unless Vagrant.has_plugin plugin
+  end
+end
 Vagrant.configure("2") do |config|
 #
 # base
@@ -57,14 +69,12 @@ end
   end
 
     config.vm.define "dev-te01" do |v|
-    v.vm.box = "ubuntu/xenial64"
     v.vm.hostname = "dev-te01.dev"
     v.vm.network "private_network", ip: "192.168.33.43"
   end
 
-    config.vm.define "ansible1" do |v|
-    v.vm.box = "ubuntu/xenial64"
-    v.vm.hostname = "ansible1.dev"
+    config.vm.define "observium" do |v|
+    v.vm.hostname = "observium.dev"
     v.vm.network "private_network", ip: "192.168.33.44"
     config.vm.provision "shell", inline: $script
   end

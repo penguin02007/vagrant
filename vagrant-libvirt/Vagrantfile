@@ -1,3 +1,5 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
 Vagrant.configure("2") do |config|
 # bootstrip
 $script = <<SCRIPT
@@ -15,8 +17,8 @@ end
   #  http://www.lucainvernizzi.net/blog/2014/12/03/vagrant-and-libvirt-kvm-qemu-setting-up-boxes-the-easy-way/
   #  libvirt provider
   config.vm.provider :libvirt do |libvirt|
-    libvirt.host = "kvm1.lab.rakops.com"
-    libvirt.username = 'opsbuild'
+    libvirt.host            = "kvm1.lab.rakops.com"
+    libvirt.username        = 'opsbuild'
     libvirt.connect_via_ssh = true
   end
   # base vm specs
