@@ -1,6 +1,6 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
-DOMAIN = '.dev'
+DOMAIN='.dev'
 plugins=[
   {
     :name    => "vagrant-scp",
@@ -17,27 +17,32 @@ plugins.each do |plugin|
   end
 end
 Vagrant.configure("2") do |config|
-#
-# base
-#
-$script = <<SCRIPT
+$bootstrap = <<SCRIPT
 echo Self provisioning...
 apt-get update -y && \
 apt-get install python-apt python-minimal -y
+SCRIPT
+$observium = <<SCRIPT
+mkdir -p /home/docker/observium/{db,lock,mysql}  && cd /home/docker/observium/
+wget https://raw.githubusercontent.com/somsakc/docker-observium/master/amd64/docker-compose.yml
+apt-get install docker-io docker-compose -y
 SCRIPT
 def nat(config)
     config.vm.provider "virtualbox" do |v|
       v.customize ["modifyvm", :id, "--nic1", "natnetwork", "--nat-network2", "pxe", "--nictype1","virtio"]
     end
 end
+  # global defaults
   config.vm.box = "ubuntu/xenial64"
   config.vm.synced_folder ".", "/vagrant", disabled: true
+  config.vm.network "private_network", type: "dhcp"
+
   config.vm.provider "virtualbox" do |v|
     v.customize ["modifyvm", :id, "--memory", "1024"]
     # http://www.virtualbox.org/manual/ch09.html#nat-adv-dns
     v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
     v.linked_clone = true
-  config.vm.provision "shell", inline: $script
+  config.vm.provision "shell", inline: $bootstrap
   end
 
   config.vm.define "dnsmasq" do |v|
@@ -75,8 +80,9 @@ end
 
     config.vm.define "observium" do |v|
     v.vm.hostname = "observium" + DOMAIN
-    v.vm.network "private_network", ip: "192.168.33.44"
-    config.vm.provision "shell", inline: $script
+    v.vm.provision "shell", inline: $bootstrap
+    v.vm.provision "shell", inline: $observium
+    v.vm.network "private_network", ip: "192.168.0.11"
   end
 
 end
