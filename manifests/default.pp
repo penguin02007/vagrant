@@ -1,21 +1,15 @@
-package { 'docker.io':
-  ensure => running,
+$bootstrap_packages = [
+  'python-apt',
+  'python-minimal',
+]
+# ubuntu only
+Exec { path => ['/usr/bin'] } 
+@exec { 'apt-get update':
+   tag => apt-get_update
+}
+notice("Running bootstrap...")
+package { $bootstrap_packages :
+  ensure => latest,
 }
 
-package { 'docker-compose'
-  ensure  => running,
-  require => Package ['docker.io'],
-}
-
-file { 
-  [
-    '/home/docker/observium/db',
-    '/home/docker/observium/lock',
-    '/home/docker/observium/mysql',
-  ]
-}
-
-file { '/home/docker/observium/docker-compose.yml'
-  content => download_content(\
-    'https://raw.githubusercontent.com/somsakc/docker-observium/master/amd64/docker-compose.yml')
-}
+Exec <| tag == apt-get_update |> -> Package <| |>

@@ -16,11 +16,6 @@ plugins.each do |plugin|
     system "vagrant plugin install #{plugin}" unless Vagrant.has_plugin plugin
   end
 end
-$bootstrap = <<SCRIPT
-echo Self provisioning...
-apt-get update -y && \
-apt-get install python-apt python-minimal -y
-SCRIPT
 Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu/xenial64"
 
@@ -57,7 +52,7 @@ Vagrant.configure("2") do |config|
 
   config.vm.define "quartermaster" do |v|
     v.vm.hostname = "quartermaster.dev"
-    v.vm.network "private_network", ip: "192.168.33.42"
+    v.vm.network "private_network", ip: "192.168.33.10"
   end
 
   config.vm.define "dev-te01" do |v|
@@ -67,13 +62,19 @@ Vagrant.configure("2") do |config|
 
   config.vm.define "observium" do |v|
     v.vm.hostname = "observium" + DOMAIN
-    v.vm.provision "shell", inline: $bootstrap
-#    v.vm.provision "shell", inline: $observium
+    v.puppet_install.puppet_version = '5.4.0'
     v.vm.provision "puppet" do | puppet |
       puppet.manifests_path = "manifests"
       puppet.manifest_file  = "default.pp"
+      puppet.manifest_file  = "observium.pp"
+      puppet.options        = "--verbose"
+    v.vm.provision "shell", inline: 'curl \
+    -o /home/docker/observium/docker-compose.yml\
+    https://raw.githubusercontent.com/somsakc/docker-observium/master/amd64/docker-compose.yml\
+    2> /dev/null
+    docker-compose -f /home/docker/observium/docker-compose.yml up -d'
     end
-    v.vm.network "private_network", ip: "192.168.0.11"
+    v.vm.network "private_network", ip: "192.168.33.11"
   end
 
 end
