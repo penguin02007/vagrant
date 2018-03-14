@@ -22,11 +22,11 @@ echo Self provisioning...
 apt-get update -y && \
 apt-get install python-apt python-minimal -y
 SCRIPT
-$observium = <<SCRIPT
-mkdir -p /home/docker/observium/{db,lock,mysql}  && cd /home/docker/observium/
-wget https://raw.githubusercontent.com/somsakc/docker-observium/master/amd64/docker-compose.yml
-apt-get install docker-io docker-compose -y
-SCRIPT
+#$observium = <<SCRIPT
+#mkdir -p /home/docker/observium/{db,lock,mysql}  && cd /home/docker/observium/
+#wget https://raw.githubusercontent.com/somsakc/docker-observium/master/amd64/docker-compose.yml
+#apt-get install docker.io docker-compose -y
+#SCRIPT
 def nat(config)
     config.vm.provider "virtualbox" do |v|
       v.customize ["modifyvm", :id, "--nic1", "natnetwork", "--nat-network2", "pxe", "--nictype1","virtio"]
@@ -82,6 +82,8 @@ end
     v.vm.hostname = "observium" + DOMAIN
     v.vm.provision "shell", inline: $bootstrap
     v.vm.provision "shell", inline: $observium
+    v.vm.provision "puppet" do | puppet |
+      puppet.manifest_path 
     v.vm.network "private_network", ip: "192.168.0.11"
   end
 
