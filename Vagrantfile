@@ -1,7 +1,7 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 DOMAIN = '.dev'
-plugins=[
+plugins = [
   {
     :name    => "vagrant-scp",
     :version => ">= 0.5.7",
@@ -16,6 +16,7 @@ plugins.each do |plugin|
     system "vagrant plugin install #{plugin}" unless Vagrant.has_plugin plugin
   end
 end
+
 Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu/xenial64"
 
@@ -48,7 +49,6 @@ Vagrant.configure("2") do |config|
   config.vm.define "puppetmaster" do |v|
     v.vm.hostname = "puppetmaster.dev"
     v.vm.network "private_network", ip: "192.168.33.41"
-  end
 
   config.vm.define "quartermaster" do |v|
     v.vm.hostname = "quartermaster.dev"
@@ -68,13 +68,13 @@ Vagrant.configure("2") do |config|
       puppet.manifest_file  = "default.pp"
       puppet.manifest_file  = "observium.pp"
       puppet.options        = "--verbose"
+    end
     v.vm.provision "shell", inline: 'curl \
     -o /home/docker/observium/docker-compose.yml\
-    https://raw.githubusercontent.com/somsakc/docker-observium/master/amd64/docker-compose.yml\
+    https://raw.githubusercontent.com/penguin02007/vagrant/master/docker-compose.yml\
     2> /dev/null
     docker-compose -f /home/docker/observium/docker-compose.yml up -d'
-    end
     v.vm.network "private_network", ip: "192.168.33.11"
+    end
   end
-
 end
