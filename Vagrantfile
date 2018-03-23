@@ -33,7 +33,7 @@ Vagrant.configure("2") do |config|
     vb.customize ["modifyvm", :id, "--memory", "1024"]
     # http://www.virtualbox.org/manual/ch09.html#nat-adv-dns
     vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
-    vb.memory = 2048
+    vb.memory = 1024
     vb.cpus = 2
     vb.linked_clone = true
   end
@@ -42,10 +42,10 @@ Vagrant.configure("2") do |config|
     config.vm.define opts[:name] do |config|
       config.vm.hostname = opts[:name] + DOMAIN
       config.vm.network :private_network, ip: opts[:eth1]
-      config.vm.provider "virtualbox" do |v|
-        v.customize ["modifyvm", :id, "--memory", opts[:mem]]
-        v.customize ["modifyvm", :id, "--cpus", opts[:cpu]]
-        v.customize ["modifyvm", :id, "--macaddress1", opts[:mac1]]
+      config.vm.provider "virtualbox" do |vb|
+        vb.customize ["modifyvm", :id, "--macaddress1", opts[:mac1]]
+        vb.memory = opts[:mem]
+        vb.cpus = opts[:cpu]
       end
     end
   end
