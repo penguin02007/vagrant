@@ -1,6 +1,15 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 DOMAIN = '.dev'
+boxes =[
+  {
+    :name => "ldap1",
+    :eth1 => "192.168.33.11",
+    :mac1 => "000c295526f9",
+    :mem  => "2048",
+    :cpu  => "2",
+  },
+]
 plugins = [
   {
     :name    => "vagrant-scp",
@@ -29,35 +38,16 @@ Vagrant.configure("2") do |config|
     vb.linked_clone = true
   end
 
-  config.vm.define "dnsmasq" do |v|
-    v.vm.hostname = "dnsmasq.dev"
-    v.vm.network "private_network", ip: "192.168.33.31"
-  end
-
-  config.vm.define "splunkn1" do |v|
-    v.vm.box = "centos/7"
-    v.vm.hostname = "splunkn1.dev"
-    v.vm.network "private_network", ip: "192.168.33.39"
-  end
-
-  config.vm.define "nagioscore" do |v|
-    v.vm.box = "daniele2010/ubuntu-14.04_x64-nagios"
-    v.vm.hostname = "nagioscore.dev"
-    v.vm.network "private_network", ip: "192.168.33.40"
-  end
-
-  config.vm.define "puppetmaster" do |v|
-    v.vm.hostname = "puppetmaster.dev"
-    v.vm.network "private_network", ip: "192.168.33.41"
-
-  config.vm.define "quartermaster" do |v|
-    v.vm.hostname = "quartermaster.dev"
-    v.vm.network "private_network", ip: "192.168.33.10"
-  end
-
-  config.vm.define "dev-te01" do |v|
-    v.vm.hostname = "dev-te01.dev"
-    v.vm.network "private_network", ip: "192.168.33.43"
+  boxes.each do |opts|
+    config.vm.define opts[:name] do |config|
+      config.vm.hostname = opts[:name] + DOMAIN
+      config.vm.network :private_network, ip: opts[:eth1]
+      config.vm.provider "virtualbox" do |v|
+        v.customize ["modifyvm", :id, "--memory", opts[:mem]]
+        v.customize ["modifyvm", :id, "--cpus", opts[:cpu]]
+        v.customize ["modifyvm", :id, "--macaddress1", opts[:mac1]]
+      end
+    end
   end
 
   config.vm.define "observium" do |v|
@@ -75,6 +65,6 @@ Vagrant.configure("2") do |config|
     2> /dev/null
     docker-compose -f /home/docker/observium/docker-compose.yml up -d'
     v.vm.network "private_network", ip: "192.168.33.11"
-    end
   end
+
 end
