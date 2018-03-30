@@ -81,7 +81,7 @@ Vagrant.configure("2") do |config|
     end
     v.vm.provision "shell", inline: 'curl \
     -o /tmp/docker-compose.ldap.yml \
-    https://raw.githubusercontent.com/penguin02007/vagrant/master/docker-compose.observium.yml\
+    https://raw.githubusercontent.com/penguin02007/vagrant/master/docker-compose.ldap.yml\
     2> /dev/null
     docker-compose -f /tmp/docker-compose.ldap.yml up -d'
   end

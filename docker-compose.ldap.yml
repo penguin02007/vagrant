@@ -1,0 +1,7 @@
+# openldap
+
+version: '2'
+
+services:
+  openldap:
+    image: osixia/openldap:1.2.0
