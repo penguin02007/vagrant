@@ -1,7 +1,22 @@
-# openldap
-
+# openldap and phpLDAPadmin
 version: '2'
-
 services:
-  openldap:
+  ldap1:
     image: osixia/openldap:1.2.0
+    ports:
+      - "389:389"
+      - "636:636"
+    volumes:
+      - /home/docker/openldap/data:/var/lib/ldap
+      - /home/docker/openldap/etc:/etc/ldap/slapd.d
+    restart: always
+    environment:
+      - LDAP_ORGANISATION=example
+      - LDAP_DOMAIN=example.com
+      - LDAP_ADMIN_PASSWORD=passw0rd
+  phpldpaadmin:
+    image: osixia/phpldapadmin:0.7.1
+    port:
+      - "6443:443"
+    environment:
+       - PHPLDAPADMIN_LDAP_HOSTS=ldap.example.com
