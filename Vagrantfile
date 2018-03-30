@@ -68,7 +68,7 @@ Vagrant.configure("2") do |config|
     end
     v.vm.provision "shell", inline: 'curl \
     -o /home/docker/observium/docker-compose.yml\
-    https://raw.githubusercontent.com/penguin02007/vagrant/master/docker-compose.yml\
+    https://raw.githubusercontent.com/penguin02007/vagrant/master/docker-compose.observium.yml\
     2> /dev/null
     docker-compose -f /home/docker/observium/docker-compose.yml up -d'
     v.vm.network "private_network", ip: "192.168.33.11"
@@ -79,6 +79,11 @@ Vagrant.configure("2") do |config|
     v.vm.provision "puppet" do | puppet |
       puppet.manifest_file  = "docker/init.pp"
     end
+    v.vm.provision "shell", inline: 'curl \
+    -o /tmp/docker-compose.ldap.yml \
+    https://raw.githubusercontent.com/penguin02007/vagrant/master/docker-compose.observium.yml\
+    2> /dev/null
+    docker-compose -f /tmp/docker-compose.ldap.yml up -d'
   end
 
   config.vm.define "splunk" do |v|
