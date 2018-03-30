@@ -96,4 +96,12 @@ Vagrant.configure("2") do |config|
     fi'
   end
 
+  config.vm.define "ansible" do |v|
+    v.vm.hostname = "ansible" + DOMAIN
+    v.vm.network "public_network"
+#    v.vm.provision "ansible" do |ansible|
+#      ansible.verbose = "v"
+#    end
+  end
+
 end
