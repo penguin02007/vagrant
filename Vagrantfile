@@ -1,11 +1,18 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 DOMAIN = '.dev'
-boxes =[
+boxes = [
   {
     :name => "ldap1",
-    :eth1 => "192.168.33.11",
+    :eth1 => "192.168.33.10",
     :mac1 => "000c295526f9",
+    :mem  => "2048",
+    :cpu  => "2",
+  },
+  {
+    :name => "observium2",
+    :eth1 => "192.168.33.11",
+    :mac1 => "000c295526f0",
     :mem  => "2048",
     :cpu  => "2",
   },
@@ -19,16 +26,20 @@ plugins = [
     :name    => "vagrant-vbguest",
     :version => ">= 0.15.1",
   },
+  {
+    :name    => "vagrant-puppet-install",
+    :version => ">= 5.0.0",
+  },
 ]
 plugins.each do |plugin|
   if not Vagrant.has_plugin?(plugin[:name], plugin[:version])
-    system "vagrant plugin install #{plugin}" unless Vagrant.has_plugin plugin
+    system "vagrant plugin install #{plugin}"
   end
 end
 
+Vagrant.require_version ">= 2.0.3"
 Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu/xenial64"
-
   config.vm.provider "virtualbox" do |vb|
     vb.customize ["modifyvm", :id, "--memory", "1024"]
     # http://www.virtualbox.org/manual/ch09.html#nat-adv-dns
@@ -42,6 +53,12 @@ Vagrant.configure("2") do |config|
     config.vm.define opts[:name] do |config|
       config.vm.hostname = opts[:name] + DOMAIN
       config.vm.network :private_network, ip: opts[:eth1]
+      config.puppet_install.puppet_version = '5.4.0'
+      config.vm.provision "puppet" do | puppet |
+        puppet.manifests_path = "manifests"
+        puppet.manifest_file  = "default.pp"
+        puppet.options        = "--verbose"
+      end
       config.vm.provider "virtualbox" do |vb|
         vb.customize ["modifyvm", :id, "--macaddress1", opts[:mac1]]
         vb.memory = opts[:mem]
@@ -50,8 +67,8 @@ Vagrant.configure("2") do |config|
     end
   end
 
-  config.vm.define "observium" do |v|
-    v.vm.hostname = "observium" + DOMAIN
+  config.vm.define "observium1" do |v|
+    v.vm.hostname = "observium1" + DOMAIN
     v.puppet_install.puppet_version = '5.4.0'
     v.vm.provision "puppet" do | puppet |
       puppet.manifests_path = "manifests"
@@ -66,5 +83,4 @@ Vagrant.configure("2") do |config|
     docker-compose -f /home/docker/observium/docker-compose.yml up -d'
     v.vm.network "private_network", ip: "192.168.33.11"
   end
-
 end
