@@ -61,7 +61,7 @@ Vagrant.configure("2") do |config|
     v.vm.hostname = "observium" + DOMAIN
     v.puppet_install.puppet_version = '5.4.0'
     v.vm.provision "puppet" do | puppet |
-      puppet.manifest_file  = "default.pp"
+      puppet.manifest_file  = "base/init.pp"
       puppet.manifest_file  = "docker/init.pp"
       puppet.manifest_file  = "observium/init.pp"
       puppet.options        = "--verbose"
