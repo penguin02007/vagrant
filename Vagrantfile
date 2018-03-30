@@ -4,16 +4,16 @@ DOMAIN = '.dev'
 boxes = [
   {
     :name => "ldap1",
-    :eth1 => "192.168.33.10",
+    :eth1 => "192.168.0.10",
     :mac1 => "000c295526f9",
     :mem  => "2048",
     :cpu  => "2",
   },
   {
-    :name => "observium2",
-    :eth1 => "192.168.33.11",
-    :mac1 => "000c295526f0",
-    :mem  => "2048",
+    :name => "splunk",
+    :eth1 => "192.168.0.11",
+    :mac1 => "000c295526fa",
+    :mem  => "4096",
     :cpu  => "2",
   },
 ]
@@ -83,4 +83,15 @@ Vagrant.configure("2") do |config|
     docker-compose -f /home/docker/observium/docker-compose.yml up -d'
     v.vm.network "private_network", ip: "192.168.33.11"
   end
+
+  config.vm.define "splunk" do |v|
+    v.vm.synced_folder "bin/", "/tmp/bin"
+    v.vm.provision "shell", inline: 'if \
+    [ ! -d \'/opt/splunk\' ]; then \
+    dpkg -i /tmp/bin/splunk-7.0.3-fa31da744b51-linux-2.6-amd64.deb; \
+    /opt/splunk/bin/splunk start --accept-license; \
+    /opt/splunk/bin/splunk enable boot-start; \
+    fi'
+  end
+
 end
