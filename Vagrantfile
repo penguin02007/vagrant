@@ -61,9 +61,9 @@ Vagrant.configure("2") do |config|
     v.vm.hostname = "observium" + DOMAIN
     v.puppet_install.puppet_version = '5.4.0'
     v.vm.provision "puppet" do | puppet |
-      puppet.manifests_path = "manifests"
       puppet.manifest_file  = "default.pp"
-      puppet.manifest_file  = "observium.pp"
+      puppet.manifest_file  = "docker/init.pp"
+      puppet.manifest_file  = "observium/init.pp"
       puppet.options        = "--verbose"
     end
     v.vm.provision "shell", inline: 'curl \
@@ -72,6 +72,13 @@ Vagrant.configure("2") do |config|
     2> /dev/null
     docker-compose -f /home/docker/observium/docker-compose.yml up -d'
     v.vm.network "private_network", ip: "192.168.33.11"
+  end
+
+  config.vm.define "ldap1" do |v|
+    v.puppet_install.puppet_version = '5.4.0'
+    v.vm.provision "puppet" do | puppet |
+      puppet.manifest_file  = "docker/init.pp"
+    end
   end
 
   config.vm.define "splunk" do |v|

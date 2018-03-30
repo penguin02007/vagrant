@@ -3,14 +3,6 @@ $docker_path = [
   '/home/docker/observium/lock',
   '/home/docker/observium/mysql',
 ]
-# docker packages
-package { 'docker.io':
-  ensure => latest,
-}
-package { 'docker-compose':
-  ensure  => latest,
-  require => Package['docker.io'],
-}
 # docker directory
 file { '/home/docker':
   ensure  => directory,
