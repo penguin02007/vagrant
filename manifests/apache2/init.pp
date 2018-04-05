@@ -1,6 +1,5 @@
-# Deploy full Splunk instance with reverse proxy
+# Deploy reverse proxy for splunk
 $ip_address = '192.168.0.12'
-$insecure_pass = 'passw0rd'
 $proxy_config = "\
 # Managed By Puppet
 <VirtualHost *:443>
@@ -19,13 +18,6 @@ $proxy_config = "\
 </VirtualHost>
 "
 
-# Enable SSL
-$web_config = "\
-# Managed By Puppet
-[settings]
-enableSplunkWebSSL = true
-"
-
 package { 'apache2':
     ensure => 'latest',
 }
@@ -34,12 +26,6 @@ file { '/etc/apache2/sites-available/reverse-proxy.conf':
     ensure  => 'file',
     content => $proxy_config,
     notify  => Service['apache2'],
-}
-
-file {'/opt/splunk/etc/system/local/web.conf':
-    ensure => 'file',
-    content => $web_config,
-    notify  => Exec['restart_splunk'],
 }
 
 file { '/etc/apache2/ssl':
@@ -78,14 +64,4 @@ exec { 'generate_ssl_cert':
     path    => ['/usr/bin', '/usr/sbin',],
     creates => '/etc/apache2/ssl/.key',
     notify  => File['/etc/apache2/sites-available/reverse-proxy.conf'],
-}
-
-exec { 'reset_splunk_password':
-    command => "/opt/splunk/bin/splunk edit user admin -password $insecure_pass -roles admin -auth admin:changeme",
-    creates  => '/opt/splunk/etc/.ui_login',
-}
-
-exec { 'restart_splunk':
-    command => "/opt/splunk/bin/splunk restart",
-    refreshonly  => true,
 }
