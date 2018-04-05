@@ -94,6 +94,13 @@ Vagrant.configure("2") do |config|
     /opt/splunk/bin/splunk start --accept-license; \
     /opt/splunk/bin/splunk enable boot-start; \
     fi'
+    v.puppet_install.puppet_version = '5.4.0'
+    v.vm.provision "puppet" do | puppet |
+      puppet.module_path    = "modules"
+      puppet.manifest_file  = "base/init.pp"
+      puppet.manifest_file  = "apache2/init.pp"
+      puppet.options        = "--verbose"
+    end
   end
 
   config.vm.define "ansible" do |v|
