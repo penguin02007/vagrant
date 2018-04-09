@@ -1,8 +1,9 @@
 # Deploy reverse proxy for splunk
-$ip_address = '192.168.0.12'
+$ip_address = '192.168.0.11'
 $proxy_config = "\
 # Managed By Puppet
 <VirtualHost *:443>
+    ServerName splunkproxy.rakops.dev
     SSLEngine on
     SSLProxyVerify none
     ProxyPreserveHost On
@@ -15,6 +16,13 @@ $proxy_config = "\
     ProxyPassReverse / https://$ip_address:8000/
     SSLCertificateFile      /etc/apache2/ssl/cert.pem
     SSLCertificateKeyFile   /etc/apache2/ssl/key.pem
+</VirtualHost>
+<VirtualHost *:80>
+    ServerName nagiosproxy.rakops.dev
+    ProxyPreserveHost On
+    ProxyRequests off
+    ProxyPass / http://$ip_address:8080/nagios
+    ProxyPassReverse / http://$ip_address:8080/nagios
 </VirtualHost>
 "
 
