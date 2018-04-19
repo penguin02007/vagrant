@@ -1,8 +1,9 @@
-[ldap1-dev1]
+## managed by puppet
+[ldap1]
 SSLEnabled = 0
 anonymous_referrals = 1
 bindDN = cn=admin,dc=example,dc=com
-bindDNpassword = $1$cctEQXZLLAfe
+bindDNpassword = passw0rd
 charset = utf8
 emailAttribute = email
 groupBaseDN = dc=example,dc=com
@@ -20,5 +21,5 @@ userBaseDN = ou=users,dc=example,dc=com
 userNameAttribute = uid
 
 [authentication]
-authSettings = ldap1-dev1
+authSettings = ldap1
 authType = LDAP
