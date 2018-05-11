@@ -24,9 +24,9 @@ boxes =[
     :cpu  => "2",
   },
   {
-    :name => "jenkinsci",
-    :eth1 => "192.168.0.13",
-    :mac1 => "000c295526f2",
+    :name => "ansible1",
+    :eth1 => "192.168.0.14",
+    :mac1 => "000c295526f3",
     :mem  => "2048",
     :cpu  => "2",
   },
@@ -112,7 +112,6 @@ Vagrant.configure("2") do |config|
     /opt/splunk/bin/splunk start --accept-license; \
     /opt/splunk/bin/splunk enable boot-start; \
     fi"
-
     v.puppet_install.puppet_version = '5.4.0'
     v.vm.provision "puppet" do | puppet |
       puppet.module_path    = "modules"
@@ -120,14 +119,6 @@ Vagrant.configure("2") do |config|
       puppet.manifest_file  = "apache2/init.pp"
       puppet.options        = "--verbose"
     end
-  end
-
-  config.vm.define "ansible" do |v|
-    v.vm.hostname = "ansible" + DOMAIN
-    v.vm.network "public_network"
-#    v.vm.provision "ansible" do |ansible|
-#      ansible.verbose = "v"
-#    end
   end
 
 end
