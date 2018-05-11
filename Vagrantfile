@@ -16,6 +16,20 @@ boxes =[
     :mem  => "2048",
     :cpu  => "2",
   },
+  {
+    :name => "observium2",
+    :eth1 => "192.168.0.12",
+    :mac1 => "000c295526f1",
+    :mem  => "2048",
+    :cpu  => "2",
+  },
+  {
+    :name => "jenkinsci",
+    :eth1 => "192.168.0.13",
+    :mac1 => "000c295526f2",
+    :mem  => "2048",
+    :cpu  => "2",
+  },
 ]
 plugins = [
   {
@@ -57,8 +71,8 @@ Vagrant.configure("2") do |config|
     end
   end
 
-  config.vm.define "observium" do |v|
-    v.vm.hostname = "observium" + DOMAIN
+  config.vm.define "observium1" do |v|
+    v.vm.hostname = "observium1" + DOMAIN
     v.puppet_install.puppet_version = '5.4.0'
     v.vm.provision "puppet" do | puppet |
       puppet.manifest_file  = "base/init.pp"
@@ -71,7 +85,7 @@ Vagrant.configure("2") do |config|
     https://raw.githubusercontent.com/penguin02007/vagrant/master/docker-compose.observium.yml\
     2> /dev/null
     docker-compose -f /home/docker/observium/docker-compose.yml up -d'
-    v.vm.network "private_network", ip: "192.168.33.11"
+    v.vm.network "private_network", ip: "192.168.0.11"
   end
 
   config.vm.define "ldap1" do |v|
