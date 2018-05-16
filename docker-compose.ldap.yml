@@ -1,11 +1,11 @@
 #
-# Install OpenLDAP, phpLDAPadmin and PWM.
+# Install OpenLDAP, phpLDAPadmin.
 #
 # openldap - https://github.com/osixia/docker-openldap
 # phpLDAPadmin  - https://github.com/osixia/docker-openldap
-# pwm - https://github.com/fjudith/docker-pwm
 #
-
+# Leo Chan
+#
 version: '2'
 services:
   ldap:
@@ -30,9 +30,3 @@ services:
       - "6443:443"
     environment:
       - PHPLDAPADMIN_LDAP_HOSTS=ldap-host
-  pwm:
-    image: fjudith/pwm:latest
-    ports:
-      - "8080:8080"
-    volumes:
-      - /home/docker/pwm:/usr/share/pwm
