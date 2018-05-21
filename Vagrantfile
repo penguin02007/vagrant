@@ -110,10 +110,7 @@ Vagrant.configure("2") do |config|
 
   config.vm.define "ansible" do |v|
     v.vm.hostname = "ansible" + DOMAIN
-    v.vm.network "public_network"
-#    v.vm.provision "ansible" do |ansible|
-#      ansible.verbose = "v"
-#    end
+#    v.vm.synced_folder "ansible/", "/etc/ansible"
   end
 
 end
