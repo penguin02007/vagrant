@@ -87,14 +87,9 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.define "splunk" do |v|
-#     v.vm.synced_folder "bin/", "/tmp/bin"
     v.vm.provision "shell", inline: "if \
     [ ! -d \'/opt/splunk\' ]; then \
-#    dpkg -i /tmp/bin/splunk-7.0.3-fa31da744b51-linux-2.6-amd64.deb; \
-    wget -O splunk-7.0.3-fa31da744b51-linux-2.6-amd64.deb \
-    'https://www.splunk.com/bin/splunk/DownloadActivityServlet?architecture=x86_64&\
-    platform=linux&version=7.0.3&product=splunk&\
-    filename=splunk-7.0.3-fa31da744b51-linux-2.6-amd64.deb&wget=true\'; \
+    wget -O splunk-7.1.1-8f0ead9ec3db-linux-2.6-amd64.deb 'https://www.splunk.com/bin/splunk/DownloadActivityServlet?architecture=x86_64&platform=linux&version=7.1.1&product=splunk&filename=splunk-7.1.1-8f0ead9ec3db-linux-2.6-amd64.deb&wget=true'; \
     /opt/splunk/bin/splunk start --accept-license; \
     /opt/splunk/bin/splunk enable boot-start; \
     fi"
