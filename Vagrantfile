@@ -18,8 +18,8 @@ boxes =[
   }
 ]
 Vagrant.configure("2") do |config|
-  config.vm.box = "ubuntu/xenial64"
-
+  config.vm.box = "centos/7"
+  config.vm.synced_folder ".", "/vagrant"
   config.vm.provider "virtualbox" do |vb|
     vb.customize ["modifyvm", :id, "--memory", "1024"]
     # http://www.virtualbox.org/manual/ch09.html#nat-adv-dns
@@ -32,12 +32,17 @@ Vagrant.configure("2") do |config|
   boxes.each do |opts|
     config.vm.define opts[:name] do |config|
       config.vm.hostname = opts[:name] + DOMAIN
-      config.vm.network :private_network, ip: opts[:eth1]
+      config.vm.network :private_network, ip: opts[:eth1], mac: opts[:mac1]
       config.vm.provider "virtualbox" do |vb|
-        vb.customize ["modifyvm", :id, "--macaddress1", opts[:mac1]]
         vb.memory = opts[:mem]
         vb.cpus = opts[:cpu]
       end
+    end
+  end
+
+  config.vm.define "client1" do |v|
+    v.vm.provision "ansible" do |ansible|
+      ansible.playbook = "iptables.yml"
     end
   end
 
