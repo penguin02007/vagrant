@@ -89,16 +89,12 @@ Vagrant.configure("2") do |config|
   config.vm.define "splunk" do |v|
     v.vm.provision "shell", inline: "if \
     [ ! -d \'/opt/splunk\' ]; then \
-    wget -O splunk-7.1.1-8f0ead9ec3db-linux-2.6-amd64.deb 'https://www.splunk.com/bin/splunk/DownloadActivityServlet?architecture=x86_64&platform=linux&version=7.1.1&product=splunk&filename=splunk-7.1.1-8f0ead9ec3db-linux-2.6-amd64.deb&wget=true'; \
-    /opt/splunk/bin/splunk start --accept-license; \
-    /opt/splunk/bin/splunk enable boot-start; \
+    wget -O /tmp/splunk-7.1.1-8f0ead9ec3db-linux-2.6-amd64.deb 'https://www.splunk.com/bin/splunk/DownloadActivityServlet?architecture=x86_64&platform=linux&version=7.1.1&product=splunk&filename=splunk-7.1.1-8f0ead9ec3db-linux-2.6-amd64.deb&wget=true' && dpkg -i /tmp/splunk-7.1.1-8f0ead9ec3db-linux-2.6-amd64.deb && /opt/splunk/bin/splunk start --accept-license --answer-yes --seed-passwd changeme && /opt/splunk/bin/splunk enable boot-start; \
     fi"
-
     v.puppet_install.puppet_version = '5.4.0'
     v.vm.provision "puppet" do | puppet |
-      puppet.module_path    = "modules"
       puppet.manifest_file  = "base/init.pp"
-      puppet.manifest_file  = "apache2/init.pp"
+      puppet.manifest_file  = "splunk/init.pp"
       puppet.options        = "--verbose"
     end
   end

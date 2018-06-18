@@ -20,7 +20,3 @@ file { $docker_path:
   group   => root,
   require => File['/home/docker/observium'],
 }
-service { 'docker':
-  ensure  => running,
-  require => Package['docker.io'],
-}
