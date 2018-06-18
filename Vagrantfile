@@ -12,8 +12,15 @@ boxes =[
   {
     :name => "server1",
     :eth1 => "192.168.0.11",
-    :mac1 => "000c295526f9",
+    :mac1 => "000c295526f1",
     :mem  => "2048",
+    :cpu  => "2",
+  },
+  {
+    :name => "ns1",
+    :eth1 => "192.168.0.12",
+    :mac1 => "000c295526f2",
+    :mem  => "1024",
     :cpu  => "2",
   }
 ]
@@ -42,7 +49,7 @@ Vagrant.configure("2") do |config|
 
   config.vm.define "client1" do |v|
     v.vm.provision "ansible" do |ansible|
-      ansible.playbook = "iptables.yml"
+      ansible.playbook = "lab.yml"
     end
   end
 

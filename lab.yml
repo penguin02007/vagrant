@@ -1,0 +1,18 @@
+---
+- hosts: all
+  tasks: 
+    - iptables:
+        chain: INPUT
+        source: " {{ item }}"
+        jump: DROP
+      become: yes
+      with_items:
+        - 8.8.8.8
+
+    - template:
+        src: host.j2
+        dest: /etc/hosts
+        owner: root
+        group: root
+        mode: '0644'
+      become: yes
