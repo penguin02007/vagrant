@@ -28,7 +28,6 @@ Vagrant.configure("2") do |config|
   config.vm.box = "centos/7"
   config.vm.synced_folder ".", "/vagrant"
   config.vm.provider "virtualbox" do |vb|
-    vb.customize ["modifyvm", :id, "--memory", "1024"]
     # http://www.virtualbox.org/manual/ch09.html#nat-adv-dns
     vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
     vb.memory = 1024
@@ -39,7 +38,7 @@ Vagrant.configure("2") do |config|
   boxes.each do |opts|
     config.vm.define opts[:name] do |config|
       config.vm.hostname = opts[:name] + DOMAIN
-      config.vm.network :private_network, ip: opts[:eth1], mac: opts[:mac1]
+      config.vm.network "private_network", ip: opts[:eth1], mac: opts[:mac1]
       config.vm.provider "virtualbox" do |vb|
         vb.memory = opts[:mem]
         vb.cpus = opts[:cpu]
@@ -52,5 +51,9 @@ Vagrant.configure("2") do |config|
       ansible.playbook = "lab.yml"
     end
   end
+
+  config.vm.define "server2" do |v|
+      config.vm.network "private_network", ip: "192.168.0.13"
+    end
 
 end
