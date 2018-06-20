@@ -4,21 +4,21 @@ DOMAIN = '.dev'
 boxes =[
   {
     :name => "client1",
-    :eth1 => "192.168.0.10",
+    :eth1 => "192.168.4.10",
     :mac1 => "000c295526f9",
     :mem  => "2048",
     :cpu  => "2",
   },
   {
     :name => "server1",
-    :eth1 => "192.168.0.11",
+    :eth1 => "192.168.4.11",
     :mac1 => "000c295526f1",
     :mem  => "2048",
     :cpu  => "2",
   },
   {
     :name => "ns1",
-    :eth1 => "192.168.0.12",
+    :eth1 => "192.168.4.12",
     :mac1 => "000c295526f2",
     :mem  => "1024",
     :cpu  => "2",
@@ -51,9 +51,5 @@ Vagrant.configure("2") do |config|
       ansible.playbook = "lab.yml"
     end
   end
-
-  config.vm.define "server2" do |v|
-      config.vm.network "private_network", ip: "192.168.0.13"
-    end
 
 end
