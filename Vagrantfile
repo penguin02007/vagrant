@@ -4,15 +4,36 @@ DOMAIN = '.dev'
 boxes =[
   {
     :name => "ldap1",
-    :eth1 => "192.168.0.10",
+    :eth1 => "192.168.4.10",
     :mac1 => "000c295526f9",
     :mem  => "2048",
     :cpu  => "2",
   },
   {
     :name => "splunk",
-    :eth1 => "192.168.0.11",
+    :eth1 => "192.168.4.11",
     :mac1 => "000c295526f0",
+    :mem  => "2048",
+    :cpu  => "2",
+  },
+  {
+    :name => "pve1",
+    :eth1 => "192.168.4.12",
+    :mac1 => "000c29000412",
+    :mem  => "2048",
+    :cpu  => "2",
+  },
+  {
+    :name => "pve2",
+    :eth1 => "192.168.4.13",
+    :mac1 => "000c29000413",
+    :mem  => "2048",
+    :cpu  => "2",
+  },
+  {
+    :name => "librenms",
+    :eth1 => "192.168.4.14",
+    :mac1 => "000c29000414",
     :mem  => "2048",
     :cpu  => "2",
   },
@@ -61,23 +82,25 @@ Vagrant.configure("2") do |config|
     v.vm.hostname = "observium" + DOMAIN
     v.puppet_install.puppet_version = '5.4.0'
     v.vm.provision "puppet" do | puppet |
-      puppet.manifest_file  = "base/init.pp"
-      puppet.manifest_file  = "docker/init.pp"
-      puppet.manifest_file  = "observium/init.pp"
-      puppet.options        = "--verbose"
+      puppet.manifests_path = "puppet/manifests"
+      puppet.manifest_file  = "site.pp"
+      puppet.module_path    = "puppet/modules"
+      puppet.options        = "--verbose --debug"
     end
     v.vm.provision "shell", inline: 'curl \
     -o /home/docker/observium/docker-compose.yml\
     https://raw.githubusercontent.com/penguin02007/vagrant/master/docker-compose.observium.yml\
     2> /dev/null
     docker-compose -f /home/docker/observium/docker-compose.yml up -d'
-    v.vm.network "private_network", ip: "192.168.33.11"
+    v.vm.network "private_network", ip: "192.168.4.9"
   end
 
   config.vm.define "ldap1" do |v|
     v.puppet_install.puppet_version = '5.4.0'
     v.vm.provision "puppet" do | puppet |
-      puppet.manifest_file  = "docker/init.pp"
+      puppet.manifests_path = "puppet/manifests"
+      puppet.manifest_file  = "site.pp"
+      puppet.module_path    = "puppet/modules"
     end
     v.vm.provision "shell", inline: 'curl \
     -o /tmp/docker-compose.ldap.yml \
@@ -87,33 +110,21 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.define "splunk" do |v|
-#     v.vm.synced_folder "bin/", "/tmp/bin"
     v.vm.provision "shell", inline: "if \
     [ ! -d \'/opt/splunk\' ]; then \
-#    dpkg -i /tmp/bin/splunk-7.0.3-fa31da744b51-linux-2.6-amd64.deb; \
-    wget -O splunk-7.0.3-fa31da744b51-linux-2.6-amd64.deb \
-    'https://www.splunk.com/bin/splunk/DownloadActivityServlet?architecture=x86_64&\
-    platform=linux&version=7.0.3&product=splunk&\
-    filename=splunk-7.0.3-fa31da744b51-linux-2.6-amd64.deb&wget=true\'; \
-    /opt/splunk/bin/splunk start --accept-license; \
-    /opt/splunk/bin/splunk enable boot-start; \
+    wget -O /tmp/splunk-7.1.1-8f0ead9ec3db-linux-2.6-amd64.deb 'https://www.splunk.com/bin/splunk/DownloadActivityServlet?architecture=x86_64&platform=linux&version=7.1.1&product=splunk&filename=splunk-7.1.1-8f0ead9ec3db-linux-2.6-amd64.deb&wget=true' && dpkg -i /tmp/splunk-7.1.1-8f0ead9ec3db-linux-2.6-amd64.deb && /opt/splunk/bin/splunk start --accept-license --answer-yes --seed-passwd changeme && /opt/splunk/bin/splunk enable boot-start; \
     fi"
-
     v.puppet_install.puppet_version = '5.4.0'
     v.vm.provision "puppet" do | puppet |
-      puppet.module_path    = "modules"
-      puppet.manifest_file  = "base/init.pp"
-      puppet.manifest_file  = "apache2/init.pp"
-      puppet.options        = "--verbose"
+      puppet.manifests_path = "puppet/manifests"
+      puppet.manifest_file  = "site.pp"
+      puppet.module_path    = "puppet/modules"
     end
   end
 
   config.vm.define "ansible" do |v|
     v.vm.hostname = "ansible" + DOMAIN
     v.vm.network "public_network"
-#    v.vm.provision "ansible" do |ansible|
-#      ansible.verbose = "v"
-#    end
   end
 
 end
