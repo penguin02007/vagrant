@@ -1,0 +1,24 @@
+#
+# Install Librenms
+#
+# Leo Chan
+#
+version: '2'
+services:
+  ldap:
+    image: jarischaefer/docker-librenms
+    ports:
+      - "80:80"
+    hostname: librenms
+    volumes:
+      - /home/docker/openldap/data:/var/lib/ldap
+      - /home/docker/openldap/etc:/etc/ldap/slapd.d
+    restart: always
+    environment:
+      - DB_HOST=db
+      - DB_NAME=librenms
+      - DB_USER=librenms
+      - DB_PASS='librenms'
+      - BASE_URL='http://librenms.lab.rakops.com'
+    links:
+      - librenms-mysql:db
