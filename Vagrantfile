@@ -84,7 +84,7 @@ Vagrant.configure("2") do |config|
     v.vm.provision "puppet" do | puppet |
       puppet.manifests_path = "puppet/manifests"
       puppet.manifest_file  = "site.pp"
-      puppet.module_path    = ["puppet/modules"]
+      puppet.module_path    = "puppet/modules"
       puppet.options        = "--verbose --debug"
     end
     v.vm.provision "shell", inline: 'curl \
