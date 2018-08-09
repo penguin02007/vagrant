@@ -12,7 +12,7 @@ class base {
   notice("Running bootstrap...")
   package { $bootstrap_packages :
     ensure => latest,
-  }  
+  }
 
   Exec <| tag == apt-get_update |> -> Package <| |>
 }

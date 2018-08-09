@@ -1,4 +1,4 @@
-# syslog-ng configuration file.
+# syslog-ng main configuration
 #
 #
 options {
@@ -32,7 +32,7 @@ filter f_slsw { match("slsw*") };
 filter f_all { not (
 filter (f_oobvpn) or
 filter (f_mgmtsw) or
-filter (f_slsw) 
+filter (f_slsw)
 );
 };
 # Log
