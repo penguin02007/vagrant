@@ -1,0 +1,25 @@
+## managed by puppet
+[ldap1]
+SSLEnabled = 0
+anonymous_referrals = 1
+bindDN = cn=admin,dc=example,dc=com
+bindDNpassword = passw0rd
+charset = utf8
+emailAttribute = email
+groupBaseDN = dc=example,dc=com
+groupMappingAttribute = dn
+groupMemberAttribute = gidnumber
+groupNameAttribute = cn
+host = ldap.dev
+nestedGroups = 0
+network_timeout = 20
+port = 389
+realNameAttribute = cn
+sizelimit = 1000
+timelimit = 15
+userBaseDN = ou=users,dc=example,dc=com
+userNameAttribute = uid
+
+[authentication]
+authSettings = ldap1
+authType = LDAP
