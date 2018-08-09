@@ -16,6 +16,27 @@ boxes =[
     :mem  => "2048",
     :cpu  => "2",
   },
+  {
+    :name => "pve1",
+    :eth1 => "192.168.4.12",
+    :mac1 => "000c29000412",
+    :mem  => "2048",
+    :cpu  => "2",
+  },
+  {
+    :name => "pve2",
+    :eth1 => "192.168.4.13",
+    :mac1 => "000c29000413",
+    :mem  => "2048",
+    :cpu  => "2",
+  },
+  {
+    :name => "librenms",
+    :eth1 => "192.168.4.14",
+    :mac1 => "000c29000414",
+    :mem  => "2048",
+    :cpu  => "2",
+  },
 ]
 plugins = [
   {
@@ -61,23 +82,25 @@ Vagrant.configure("2") do |config|
     v.vm.hostname = "observium" + DOMAIN
     v.puppet_install.puppet_version = '5.4.0'
     v.vm.provision "puppet" do | puppet |
-      puppet.manifest_file  = "base/init.pp"
-      puppet.manifest_file  = "docker/init.pp"
-      puppet.manifest_file  = "observium/init.pp"
-      puppet.options        = "--verbose"
+      puppet.manifests_path = "puppet/manifests"
+      puppet.manifest_file  = "site.pp"
+      puppet.module_path    = ["puppet/modules"]
+      puppet.options        = "--verbose --debug"
     end
     v.vm.provision "shell", inline: 'curl \
     -o /home/docker/observium/docker-compose.yml\
     https://raw.githubusercontent.com/penguin02007/vagrant/master/docker-compose.observium.yml\
     2> /dev/null
     docker-compose -f /home/docker/observium/docker-compose.yml up -d'
-    v.vm.network "private_network", ip: "192.168.33.11"
+    v.vm.network "private_network", ip: "192.168.4.9"
   end
 
   config.vm.define "ldap1" do |v|
     v.puppet_install.puppet_version = '5.4.0'
     v.vm.provision "puppet" do | puppet |
-      puppet.manifest_file  = "docker/init.pp"
+      puppet.manifests_path = "puppet/manifests"
+      puppet.manifest_file  = "site.pp"
+      puppet.module_path    = "puppet/modules"
     end
     v.vm.provision "shell", inline: 'curl \
     -o /tmp/docker-compose.ldap.yml \
@@ -93,9 +116,9 @@ Vagrant.configure("2") do |config|
     fi"
     v.puppet_install.puppet_version = '5.4.0'
     v.vm.provision "puppet" do | puppet |
-      puppet.manifest_file  = "base/init.pp"
-      puppet.manifest_file  = "splunk/init.pp"
-      puppet.options        = "--verbose"
+      puppet.manifests_path = "puppet/manifests"
+      puppet.manifest_file  = "site.pp"
+      puppet.module_path    = "puppet/modules"
     end
   end
 
