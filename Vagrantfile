@@ -83,9 +83,7 @@ Vagrant.configure("2") do |config|
     v.puppet_install.puppet_version = '5.4.0'
     v.vm.provision "puppet" do | puppet |
       puppet.manifests_path = "puppet/manifests"
-      puppet.manifest_file  = "site.pp"
       puppet.module_path    = "puppet/modules"
-      puppet.options        = "--verbose --debug"
     end
     v.vm.provision "shell", inline: 'curl \
     -o /home/docker/observium/docker-compose.yml\
@@ -99,7 +97,6 @@ Vagrant.configure("2") do |config|
     v.puppet_install.puppet_version = '5.4.0'
     v.vm.provision "puppet" do | puppet |
       puppet.manifests_path = "puppet/manifests"
-      puppet.manifest_file  = "site.pp"
       puppet.module_path    = "puppet/modules"
     end
     v.vm.provision "shell", inline: 'curl \
@@ -117,8 +114,8 @@ Vagrant.configure("2") do |config|
     v.puppet_install.puppet_version = '5.4.0'
     v.vm.provision "puppet" do | puppet |
       puppet.manifests_path = "puppet/manifests"
-      puppet.manifest_file  = "site.pp"
       puppet.module_path    = "puppet/modules"
+      puppet.options        = "--verbose --show_diff"
     end
   end
 

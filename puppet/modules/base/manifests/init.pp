@@ -14,5 +14,10 @@ class base {
     ensure => latest,
   }
 
+  file {'/etc/hosts':
+    ensure => 'file',
+    content => template('base/hosts.erb'),
+  }
+
   Exec <| tag == apt-get_update |> -> Package <| |>
 }
