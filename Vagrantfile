@@ -120,6 +120,7 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.define "ansible" do |v|
+    v.vm.box = "ubuntu/bionic64"
     v.vm.hostname = "ansible" + DOMAIN
     v.vm.network "public_network", ip: "192.168.4.15"
   end
