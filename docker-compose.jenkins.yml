@@ -1,11 +1,10 @@
-# https://hub.docker.com/r/h1kkan/jenkins-docker/
-# This is a fully functional Jenkins server, bundled
-# with Docker, Ansible, AWSCLI and pre-installed Jenkins plugins. Based on the Jenkins LTS releases.
+# https://github.com/jenkinsci/docker
+# This is a fully functional Jenkins server. https://jenkins.io/.
 version: '2'
 services:
   jenkins:
     restart: always
-    image: h1kkan/jenkins-docker:lts
+    image: jenkins/jenkins:lts
     ports:
       - 8000:8080/tcp
       - 50000:5000/tcp
