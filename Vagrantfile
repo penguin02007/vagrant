@@ -127,6 +127,7 @@ Vagrant.configure("2") do |config|
     apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 93C4A3FD7BB9C367; \
     apt-get update; \
     apt-get install ansible -y; \
+    wget https://raw.githubusercontent.com/penguin02007/etc/master/bootstrap.sh -O /tmp/bootstrap.sh && bash /tmp/bootstrap.sh docker; \
     "
   end
 
