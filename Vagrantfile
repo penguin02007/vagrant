@@ -17,7 +17,7 @@ boxes =[
     :cpu  => "2",
   },
   {
-    :name => "pve1",
+    :name => "ansible",
     :eth1 => "192.168.4.12",
     :mac1 => "000c29000412",
     :mem  => "2048",
@@ -123,6 +123,11 @@ Vagrant.configure("2") do |config|
     v.vm.box = "ubuntu/bionic64"
     v.vm.hostname = "ansible" + DOMAIN
     v.vm.network "public_network", ip: "192.168.4.15"
+    v.vm.provision "shell", inline: "
+    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 93C4A3FD7BB9C367; \
+    apt-get update; \
+    apt-get install ansible -y; \
+    "
   end
 
 end
