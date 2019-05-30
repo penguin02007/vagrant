@@ -20,7 +20,7 @@ services:
       - "--docker.domain=${DOMAINNAME}"
       - "--acme=true"
       - "--acme.acmelogging=true"
-      - "--acme.email=webmaster@example.com"
+      - "--acme.email={{ syscontact }}"
       - "--acme.storage=acme.json"
       - "--acme.entryPoint=https"
       - "--acme.onhostrule=true"
